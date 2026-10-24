@@ -30,7 +30,7 @@ pipeline
     }
     post{
         success{
-            echo 'Piplime completed successfully!'
+            echo 'Pipline completed successfully!'
 
         }
         failure{
