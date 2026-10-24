@@ -1,60 +1,40 @@
-pipeline {
+pipeline
+{
     agent any
-
-    stages {
-
-        stage('Build Docker Image') {
-            steps {
-                echo "Building Docker Image"
+    stages{
+        stage('Build Docker Image'){
+            steps{
+                echo "Build Docker Image"
                 bat "docker build -t digitalvisitorapp:v1 ."
             }
         }
-
-        stage('Docker Login') {
-            steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )
-                ]) {
-                    bat 'docker login -u %DOCKER_USERNAME% -p %DOCKER_PASSWORD%'
-                }
+        stage('Docker Login'){
+            steps{
+                bat 'docker login -u supriyamallesh -p Supriya@206' 
             }
         }
-
-        stage('Push Docker Image to Docker Hub') {
-            steps {
-                echo "Pushing Docker Image to Docker Hub"
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-credentials',
-                        usernameVariable: 'DOCKER_USERNAME',
-                        passwordVariable: 'DOCKER_PASSWORD'
-                    )
-                ]) {
-                    bat "docker tag digitalvisitorapp:v1 %DOCKER_USERNAME%/digitalvisitorapp:v1"
-                    bat "docker push %DOCKER_USERNAME%/digitalvisitorapp:v1"
-                }
+        stage('push Docker Image to Docker Hub'){
+            steps{
+                echo "push Docker Image to Docker Hub"
+                bat "docker tag digitalvisitorapp:v1 supriyamallesh/digitalvisitorapp:v1"
+                bat "docker push supriyamallesh/digitalvisitorapp:v1"
             }
         }
-
-        stage('Deploy to Kubernetes') {
-            steps {
+        stage('Deploy to Kubernets')
+        {
+            steps{
                 bat 'kubectl apply -f deployment.yaml --validate=false'
                 bat 'kubectl apply -f service.yaml'
             }
         }
     }
+    post{
+        success{
+            echo 'Piplime completed successfully!'
 
-    post {
-        success {
-            echo 'Pipeline completed successfully!'
         }
-
-        failure {
-            echo 'Pipeline failed. Please check the logs.'
+        failure{
+            echo 'Pipeline failed, Please check the logs.'
         }
     }
 }
