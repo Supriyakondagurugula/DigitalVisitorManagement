@@ -1,0 +1,25 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: digitalvisitor-deployment
+
+spec:
+  replicas: 4
+
+  selector:
+    matchLabels:
+      app: digitalvisitor
+
+  template:
+    metadata:
+      labels:
+        app: digitalvisitor
+
+    spec:
+      containers:
+        - name: digitalvisitor
+          image: supriyamallesh/digitalvisitorapp:v1
+
+          ports:
+            - containerPort: 5000
